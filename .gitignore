@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Local environments and IDE state
+.venv/
+.env
+.idea/
+.vscode/
+
+# Generated artifacts and model caches
+artifacts/
+.hf_cache/
+
+# Generated submissions and run outputs
+*submission*.csv
+
+# System files
+.DS_Store
