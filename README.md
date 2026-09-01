@@ -1,49 +1,79 @@
 # Kaggle Disaster Tweets
 
-Rules-compliant modeling workspace for Kaggle's **Natural Language Processing with Disaster Tweets** competition.
+Rules-compliant modeling workspace for Kaggle's Natural Language Processing with Disaster Tweets competition.
 
-The project contains classical sparse baselines, BERTweet fine-tuning, probability ensembling, and a final OOF-selected blend. The current strongest local candidate is generated as `best_submission.csv` from a two-seed BERTweet ensemble blended with a sparse TF-IDF model.
+This repository contains a complete NLP workflow for classifying whether tweets describe real disasters. The primary solution lives in the notebooks, progressing from classical sparse baselines to BERTweet fine-tuning and OOF-selected probability blending. The current strongest local candidate is `best_submission.csv`, generated from a BERTweet probability ensemble blended with a sparse TF-IDF model.
 
-## Repository Layout
+This solution achieved a top 50 ranking in the Kaggle competition.
 
-```text
-.
-|-- data/                         # Kaggle train.csv and test.csv
-|-- notebooks/                    # Polished notebook versions for GitHub review
-|-- bertweet_solution.py          # BERTweet cross-validation and inference pipeline
-|-- sparse_solution.py            # Sparse TF-IDF ensemble pipeline
-|-- ensemble_probabilities.py     # Average compatible OOF/test probability artifacts
-|-- blend_submission.py           # OOF-selected BERTweet + sparse blend
-|-- id_aware_blend.py             # Experimental OOF-safe ID-prior blend
-|-- championship_solution.py      # Original stacked baseline
-`-- requirements.txt
-```
+## Quick Start
 
-Generated files stay local and are gitignored: `artifacts/`, submission CSVs, `.venv/`, and `.hf_cache/`.
-
-## Notebook Order
-
-The notebooks are organized as a readable modeling story:
-
-1. `notebooks/01_original_stacked_baseline.ipynb`
-2. `notebooks/02_sparse_tfidf_ensemble.ipynb`
-3. `notebooks/03_bertweet_finetuning.ipynb`
-4. `notebooks/04_probability_ensemble.ipynb`
-5. `notebooks/05_bertweet_sparse_blend.ipynb`
-6. `notebooks/06_id_aware_blend_experiment.ipynb`
-
-Notebook outputs are cleared for clean diffs. The matching `.py` scripts remain the source of truth for repeatable runs.
-
-## Reproduce
-
-Install dependencies:
+Create an environment and install the project dependencies:
 
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 ```
 
-Run the sparse baseline:
+Launch Jupyter:
+
+```bash
+.venv/bin/jupyter notebook
+```
+
+Recommended notebook workflow:
+
+1. Run `notebooks/02_sparse_tfidf_ensemble.ipynb`.
+2. Run `notebooks/03_bertweet_finetuning.ipynb`.
+3. Run `notebooks/04_probability_ensemble.ipynb` if you have multiple BERTweet seed artifacts.
+4. Run `notebooks/05_bertweet_sparse_blend.ipynb` to create the final conservative blend.
+
+The notebooks include visual diagnostics for data quality, feature behavior, OOF probability separation, threshold search, model agreement, and blend selection.
+
+## Repository Layout
+
+```text
+.
+|-- data/
+|   |-- train.csv
+|   `-- test.csv
+|-- notebooks/
+|   |-- README.md
+|   |-- 01_original_stacked_baseline.ipynb
+|   |-- 02_sparse_tfidf_ensemble.ipynb
+|   |-- 03_bertweet_finetuning.ipynb
+|   |-- 04_probability_ensemble.ipynb
+|   |-- 05_bertweet_sparse_blend.ipynb
+|   `-- 06_id_aware_blend_experiment.ipynb
+|-- championship_solution.py
+|-- sparse_solution.py
+|-- bertweet_solution.py
+|-- ensemble_probabilities.py
+|-- blend_submission.py
+|-- id_aware_blend.py
+|-- CHAMPIONSHIP_README.md
+|-- README.md
+`-- requirements.txt
+```
+
+Generated files are intentionally local and gitignored, including `.venv/`, `.hf_cache/`, `artifacts/`, and submission CSVs.
+
+## Notebook Guide
+
+| Notebook | Purpose | Main output |
+| --- | --- | --- |
+| `01_original_stacked_baseline.ipynb` | Classical text-cleaning, engineered-feature, and stacked-model baseline | `championship_submission.csv` |
+| `02_sparse_tfidf_ensemble.ipynb` | Fast sparse TF-IDF model with OOF threshold selection | `sparse_submission.csv`, `artifacts/sparse*/predictions.npz` |
+| `03_bertweet_finetuning.ipynb` | BERTweet cross-validation fine-tuning | `bertweet_submission.csv`, `artifacts/bertweet*/predictions.npz` |
+| `04_probability_ensemble.ipynb` | Multi-seed probability averaging | `bertweet_two_seed_submission.csv`, `artifacts/bertweet_ensemble_predictions.npz` |
+| `05_bertweet_sparse_blend.ipynb` | OOF-selected BERTweet and sparse-model blend | `best_submission.csv`, `artifacts/best_metadata.json` |
+| `06_id_aware_blend_experiment.ipynb` | Experimental row-ID prior blend for research only | `id_aware_submission.csv`, `artifacts/id_aware_predictions.npz` |
+
+## Script Alternatives
+
+The notebooks are the preferred review format, but equivalent scripts are available for repeatable local runs.
+
+Sparse baseline:
 
 ```bash
 .venv/bin/python sparse_solution.py \
@@ -53,7 +83,7 @@ Run the sparse baseline:
   --output sparse_submission_3fold.csv
 ```
 
-Run a BERTweet fold or full run:
+BERTweet fine-tuning:
 
 ```bash
 .venv/bin/python bertweet_solution.py \
@@ -66,7 +96,7 @@ Run a BERTweet fold or full run:
   --output bertweet_submission.csv
 ```
 
-Blend the final probability artifacts:
+Final blend:
 
 ```bash
 .venv/bin/python blend_submission.py \
@@ -77,9 +107,9 @@ Blend the final probability artifacts:
   --metadata artifacts/best_metadata.json
 ```
 
-## Validation Notes
+## Validation Principles
 
 - Thresholds are selected from out-of-fold predictions using F1.
+- Blending weights are selected from OOF validation, not leaderboard feedback.
 - The pipelines do not read, infer, or hard-code test labels.
-- `data/train.csv` and `data/test.csv` are included so the notebooks and scripts can run after clone.
-- Generated assets such as `.venv/`, `.hf_cache/`, `artifacts/`, and submission CSVs are gitignored.
+- The ID-aware notebook is kept separate as an experiment and should be submitted only after reviewing the competition rules.

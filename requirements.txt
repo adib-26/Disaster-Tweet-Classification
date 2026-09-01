@@ -1,8 +1,15 @@
 pandas>=1.3.0
 numpy>=1.21.0
 scikit-learn>=1.0.0
+scipy>=1.10.0
+matplotlib>=3.7.0
+seaborn>=0.13.0
+notebook>=7.0.0
 # BERTweet fine-tuning pipeline (bertweet_solution.py)
 torch>=2.6
 transformers>=5.0
 accelerate>=1.4
 emoji==0.6.0
+
+lightgbm
+xgboost

@@ -1,6 +1,7 @@
 # Python
 __pycache__/
 *.py[cod]
+*.py
 .ipynb_checkpoints/
 
 # Local environments and IDE state
