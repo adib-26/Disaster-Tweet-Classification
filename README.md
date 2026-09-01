@@ -2,7 +2,7 @@
 
 A rules-compliant NLP pipeline for Kaggle's [Natural Language Processing with Disaster Tweets](https://www.kaggle.com/competitions/nlp-getting-started) competition, classifying whether a tweet describes a real disaster.
 
-**Result:** top 50 on the leaderboard, from `best_submission.csv`, a BERTweet probability ensemble blended with a sparse TF-IDF model.
+**Result: top 50 on the leaderboard**, from `best_submission.csv`, a BERTweet probability ensemble blended with a sparse TF-IDF model.
 
 ## Approach
 
